@@ -104,7 +104,7 @@ if __name__ == "__main__":
     import sys
 
     file_location = sys.argv[1]
-    output_location = sys.argv[2]
+    # output_location = sys.argv[2]
     print("input file location",file_location)
     # print()
     # print("output file location",output_location)
