@@ -106,8 +106,8 @@ if __name__ == "__main__":
     file_location = sys.argv[1]
     output_location = sys.argv[2]
     print("input file location",file_location)
-    print()
-    print("output file location",file_location)
+    # print()
+    # print("output file location",output_location)
 
     # fn = "../Data/green.csv"
     # # fn = '../Data/yellow.csv.gz'
@@ -121,6 +121,9 @@ if __name__ == "__main__":
         .sortByKey() \
         .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
-        .saveAsTextFile(output_location)
+    
+    for key in counts.collect():
+        print(key)
+        # .saveAsTextFile(output_location)
 
     print('task complete')
