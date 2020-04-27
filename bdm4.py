@@ -43,22 +43,21 @@ def processTrips(pid, records):
     proj = pyproj.Proj(init="epsg:2263", preserve_units=True)
     # neighborhood index
     index, neighborhoods = createIndex('../Data/neighborhoods.geojson')
-    # borough index
-    bindex,boroughs = createIndex("../Data/boroughs.geojson")
-    
+
     # Skip the header
     if pid==0:
         next(records)
     reader = csv.reader(records)
     counts = {}
     
-    boroNames = boroughs['boro_name']
+#   boroNames = boroughs['boro_name']
     neighborhoodNames = neighborhoods['neighborhood']
+    boroNames = neighborhoods['borough']
 
     for row in reader:
         pickup = geom.Point(proj(float(row[3]), float(row[2])))
-        
-        bh = findZone(pickup, bindex, boroughs)
+
+        bh = findZone(pickup, index, neighborhoods)
         nbd = None
         
         # checks the destination column for errors
@@ -76,16 +75,52 @@ def processTrips(pid, records):
             
     return counts.items()
 
-from pyspark import SparkContext
-import sys
-fn = '../Data/yellow.csv.gz'
-sc = SparkContext()
-rdd = sc.textFile(fn)
-counts = rdd.mapPartitionsWithIndex(processTrips) \
-    .reduceByKey(lambda x,y: x+y) \
-    .map(lambda x: (x[0].split("-")[0], (x[0].split("-")[1], x[1]))) \
-    .groupByKey() \
-    .map(lambda x: (x[0], sorted(x[1], key=lambda z: z[1], reverse=True)[:3])) \
+def toCSVLine(data):
+    string = []
+    
+    for d in data:
+        if(type(d) is list):
+            string.append(','.join(str(e) for e in d))
+        else:
+            string.append(d)
+    return ','.join(str(e) for e in string )
 
-for key in counts.collect():
-    print(key)
+def unpackTupes(data):
+    j = []
+    
+    def foo(a, b=None):
+        j.append(a)
+        j.append(b)
+
+    for i in data:
+        foo(*i)
+
+    return j
+
+
+if __name__ == "__main__":
+
+    from pyspark import SparkContext
+    import sys
+
+    file_location = sys.argv[1]
+    output_location = sys.argv[2]
+    print("input file location",file_location)
+    print()
+    print("output file location",file_location)
+
+    # fn = "../Data/green.csv"
+    # # fn = '../Data/yellow.csv.gz'
+    sc = SparkContext()
+    rdd = sc.textFile(file_location)
+    counts = rdd.mapPartitionsWithIndex(processTrips) \
+        .reduceByKey(lambda x,y: x+y) \
+        .map(lambda x: (x[0].split("-")[0], (x[0].split("-")[1], x[1]))) \
+        .groupByKey() \
+        .map(lambda x: (x[0], sorted(x[1], key=lambda z: z[1], reverse=True)[:3])) \
+        .sortByKey() \
+        .mapValues(lambda x: unpackTupes(x)) \
+        .map(toCSVLine) \
+        .saveAsTextFile(output_location)
+
+    print('task complete')
