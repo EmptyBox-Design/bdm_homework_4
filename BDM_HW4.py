@@ -70,13 +70,16 @@ def processTrips(pid, records):
                     nbd = findZone(dropoff, index, neighborhoods)
                 except ValueError:
                     continue
-                
+            # returns the borough-neighborhood as a key to the dict with a counter of 1 
+            # only returns if neighborhood and boro are not None. We are not returning None values
             if nbd is not None and boro_index is not None:
                 key = str(boroNames[boro_index])+"-"+str(neighborhoodNames[nbd])
                 counts[key] = counts.get(key, 0) +1
 
     return counts.items()
 
+# writes data csv 
+# unpacks value tuples
 def toCSVLine(data):
     string = []
     
@@ -87,6 +90,8 @@ def toCSVLine(data):
             string.append(d)
     return ','.join(str(e) for e in string )
 
+# input value as a nested tuple
+# returns list of flattened tuples
 def unpackTupes(data):
     j = []
     
@@ -98,7 +103,6 @@ def unpackTupes(data):
         foo(*i)
 
     return j
-
 
 if __name__ == "__main__":
 
