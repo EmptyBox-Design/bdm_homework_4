@@ -60,7 +60,7 @@ def processTrips(pid, records):
             bh = findZone(pickup, index, neighborhoods)
             nbd = None
 
-            if(row[10] is not None and row[10] != str):
+            if(row[10] is not None and row[10] != str and row[9] != str):
                 dropoff = geom.Point(proj(float(row[9]), float(row[10])))
 
                 nbd = findZone(dropoff, index, neighborhoods)
