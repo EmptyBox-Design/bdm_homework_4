@@ -11,7 +11,7 @@ def readData(f):
     for row in reader:
       print(row)
       i += 1
-      if(i == 5):
+      if(i == 100):
         break
 
 if __name__ == "__main__":
