@@ -55,23 +55,24 @@ def processTrips(pid, records):
 
     for row in reader:
         print(row)
-        pickup = geom.Point(proj(float(row[5]), float(row[6])))
+        if(len(row) > 1):
+            pickup = geom.Point(proj(float(row[5]), float(row[6])))
 
-        bh = findZone(pickup, index, neighborhoods)
-        nbd = None
-        
-        # checks the destination column for errors
-        if(row[10] is not None and row[10] != "0.0" and row[10] != 'NULL'):
-            dropoff = geom.Point(proj(float(row[10]), float(row[9])))
-            # Look up a matching zone, and update the count accordly if
-            # such a match is found
-            nbd = findZone(dropoff, index, neighborhoods)
-            # look up matching borough for destination
+            bh = findZone(pickup, index, neighborhoods)
+            nbd = None
+            
+            # checks the destination column for errors
+            if(row[10] is not None and row[10] != "0.0" and row[10] != 'NULL'):
+                dropoff = geom.Point(proj(float(row[10]), float(row[9])))
+                # Look up a matching zone, and update the count accordly if
+                # such a match is found
+                nbd = findZone(dropoff, index, neighborhoods)
+                # look up matching borough for destination
 
-        # checks the neighborhood or borough returns for data
-        if nbd is not None and bh is not None:
-            key = str(boroNames[bh])+"-"+str(neighborhoodNames[nbd])
-            counts[key] = counts.get(key, 0) +1
+            # checks the neighborhood or borough returns for data
+            if nbd is not None and bh is not None:
+                key = str(boroNames[bh])+"-"+str(neighborhoodNames[nbd])
+                counts[key] = counts.get(key, 0) +1
             
     return counts.items()
 
