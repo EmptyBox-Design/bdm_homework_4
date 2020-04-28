@@ -42,7 +42,7 @@ def processTrips(pid, records):
     # Create an R-tree index
     proj = pyproj.Proj(init="epsg:2263", preserve_units=True)
     # neighborhood index
-    index, neighborhoods = createIndex('../Data/neighborhoods.geojson')
+    index, neighborhoods = createIndex("hdfs:///tmp/bdm/neighborhoods.geojson")
 
     # Skip the header
     if pid==0:
