@@ -77,14 +77,15 @@ def processTrips(pid, records):
     return counts.items()
 
 def toCSVLine(data):
-    string = []
+    # string = []
     
-    for d in data:
-        if(type(d) is list):
-            string.append(','.join(str(e) for e in d))
-        else:
-            string.append(d)
-    return ','.join(str(e) for e in string )
+    # for d in data:
+    #     if(type(d) is list):
+    #         string.append(','.join(str(e) for e in d))
+    #     else:
+    #         string.append(d)
+    # return ','.join(str(e) for e in string )
+    return ",".join(str(d) for d in data)
 
 def unpackTupes(data):
     j = []
@@ -115,10 +116,10 @@ if __name__ == "__main__":
         .groupByKey() \
         .map(lambda x: (x[0], sorted(x[1], key=lambda z: z[1], reverse=True)[:3])) \
         .sortByKey() \
-        .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
         .saveAsTextFile(output_location)
     
+    # .mapValues(lambda x: unpackTupes(x)) \
     # for key in counts:
     #     print(key)
         # .saveAsTextFile(output_location)
