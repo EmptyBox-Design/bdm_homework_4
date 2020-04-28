@@ -116,8 +116,9 @@ if __name__ == "__main__":
         .sortByKey() \
         .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
+        .collect()
     
-    for key in counts.collect():
+    for key in counts:
         print(key)
         # .saveAsTextFile(output_location)
 
