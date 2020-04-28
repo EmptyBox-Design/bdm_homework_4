@@ -56,14 +56,14 @@ def processTrips(pid, records):
 
     for row in reader:
         print(row)
-        pickup = geom.Point(proj(float(row[3]), float(row[2])))
+        pickup = geom.Point(proj(float(row[4]), float(row[3])))
 
         bh = findZone(pickup, index, neighborhoods)
         nbd = None
         
         # checks the destination column for errors
-        if(row[5] is not None and row[5] != "0.0" and row[5] != 'NULL'):
-            dropoff = geom.Point(proj(float(row[5]), float(row[4])))
+        if(row[6] is not None and row[6] != "0.0" and row[6] != 'NULL'):
+            dropoff = geom.Point(proj(float(row[6]), float(row[5])))
             # Look up a matching zone, and update the count accordly if
             # such a match is found
             nbd = findZone(dropoff, index, neighborhoods)
