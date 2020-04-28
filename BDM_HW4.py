@@ -55,6 +55,7 @@ def processTrips(pid, records):
     boroNames = neighborhoods['borough']
 
     for row in reader:
+        print(row)
         pickup = geom.Point(proj(float(row[3]), float(row[2])))
 
         bh = findZone(pickup, index, neighborhoods)
