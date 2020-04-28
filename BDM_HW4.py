@@ -62,7 +62,7 @@ def processTrips(pid, records):
             nbd = None
             
             # checks the destination column for errors
-            if(row[10] is not None and row[10] != "0.0" and row[10] != 'NULL' and type(row) == float):
+            if(row[10] is not None and row[10] != "0.0" and row[10] != 'NULL' and type(row[10]) == float):
                 dropoff = geom.Point(proj(float(row[10]), float(row[9])))
                 # Look up a matching zone, and update the count accordly if
                 # such a match is found
