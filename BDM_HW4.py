@@ -50,20 +50,19 @@ def processTrips(pid, records):
     reader = csv.reader(records)
     counts = {}
     
-#   boroNames = boroughs['boro_name']
     neighborhoodNames = neighborhoods['neighborhood']
     boroNames = neighborhoods['borough']
 
     for row in reader:
         print(row)
-        pickup = geom.Point(proj(float(row[4]), float(row[3])))
+        pickup = geom.Point(proj(float(row[5]), float(row[6])))
 
         bh = findZone(pickup, index, neighborhoods)
         nbd = None
         
         # checks the destination column for errors
-        if(row[6] is not None and row[6] != "0.0" and row[6] != 'NULL'):
-            dropoff = geom.Point(proj(float(row[6]), float(row[5])))
+        if(row[10] is not None and row[10] != "0.0" and row[10] != 'NULL'):
+            dropoff = geom.Point(proj(float(row[10]), float(row[9])))
             # Look up a matching zone, and update the count accordly if
             # such a match is found
             nbd = findZone(dropoff, index, neighborhoods)
@@ -105,13 +104,7 @@ if __name__ == "__main__":
     import sys
 
     file_location = sys.argv[1]
-    # output_location = sys.argv[2]
-    print("input file location",file_location)
-    # print()
-    # print("output file location",output_location)
 
-    # fn = "../Data/green.csv"
-    # # fn = '../Data/yellow.csv.gz'
     sc = SparkContext()
     rdd = sc.textFile(file_location)
     counts = rdd.mapPartitionsWithIndex(processTrips) \
