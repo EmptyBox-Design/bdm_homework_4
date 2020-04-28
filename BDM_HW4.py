@@ -48,18 +48,22 @@ def processTrips(pid, records):
     if pid==0:
         next(records)
     reader = csv.reader(records)
+    # create dict
     counts = {}
     
     neighborhoodNames = neighborhoods['neighborhood']
     boroNames = neighborhoods['borough']
 
     for row in reader:
+        # checks for empty rows
         if (len(row) > 0):
+            # pickup location
             pickup = geom.Point(proj(float(row[5]), float(row[6])))
-
-            bh = findZone(pickup, index, neighborhoods)
+            # query the neighborhood index for pickups
+            boro_index = findZone(pickup, index, neighborhoods)
+            # init neighborhood variable
             nbd = None
-
+            # data checks
             if(row[10] is not None and row[10] != str and row[9] != str):
                 try: 
                     dropoff = geom.Point(proj(float(row[9]), float(row[10])))
@@ -67,8 +71,8 @@ def processTrips(pid, records):
                 except ValueError:
                     continue
                 
-            if nbd is not None and bh is not None:
-                key = str(boroNames[bh])+"-"+str(neighborhoodNames[nbd])
+            if nbd is not None and boro_index is not None:
+                key = str(boroNames[boro_index])+"-"+str(neighborhoodNames[nbd])
                 counts[key] = counts.get(key, 0) +1
 
     return counts.items()
@@ -82,7 +86,6 @@ def toCSVLine(data):
         else:
             string.append(d)
     return ','.join(str(e) for e in string )
-    # return ",".join(str(d) for d in data)
 
 def unpackTupes(data):
     j = []
@@ -116,10 +119,3 @@ if __name__ == "__main__":
         .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
         .saveAsTextFile(output_location)
-    
-    # 
-    # for key in counts:
-    #     print(key)
-        # .saveAsTextFile(output_location)
-
-    print('task complete')
