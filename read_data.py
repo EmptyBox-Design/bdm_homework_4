@@ -1,9 +1,11 @@
 def readData(f):
   import csv
-  import gzip
+  # import gzip
 
-  with gzip.open(f, mode='rt') as recrods:
-    reader = csv.reader(recrods)
+  # with gzip.open(f, mode='rt') as recrods:
+  #   reader = csv.reader(recrods)
+  with open('eggs.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
 
     i = 0
     for row in reader:
