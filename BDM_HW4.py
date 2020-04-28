@@ -61,10 +61,12 @@ def processTrips(pid, records):
             nbd = None
 
             if(row[10] is not None and row[10] != str and row[9] != str):
-                dropoff = geom.Point(proj(float(row[9]), float(row[10])))
-
-                nbd = findZone(dropoff, index, neighborhoods)
-
+                try: 
+                    dropoff = geom.Point(proj(float(row[9]), float(row[10])))
+                    nbd = findZone(dropoff, index, neighborhoods)
+                except ValueError:
+                    continue
+                
             if nbd is not None and bh is not None:
                 key = str(boroNames[bh])+"-"+str(neighborhoodNames[nbd])
                 counts[key] = counts.get(key, 0) +1
