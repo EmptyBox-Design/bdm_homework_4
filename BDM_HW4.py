@@ -54,38 +54,33 @@ def processTrips(pid, records):
     boroNames = neighborhoods['borough']
 
     for row in reader:
-
-        if(len(row) > 1):
+        if (len(row) > 0):
             pickup = geom.Point(proj(float(row[5]), float(row[6])))
 
             bh = findZone(pickup, index, neighborhoods)
             nbd = None
-            
-            # checks the destination column for errors
-            if(row[9] is not None and row[9] != "0.0" and row[9] != 'NULL' and type(row[9]) != str):
-                dropoff = geom.Point(proj(float(row[9]), float(row[10])))
-                # Look up a matching zone, and update the count accordly if
-                # such a match is found
-                nbd = findZone(dropoff, index, neighborhoods)
-                # look up matching borough for destination
 
-            # checks the neighborhood or borough returns for data
+            if(row[10] is not None and row[10] != str):
+                dropoff = geom.Point(proj(float(row[9]), float(row[10])))
+
+                nbd = findZone(dropoff, index, neighborhoods)
+
             if nbd is not None and bh is not None:
                 key = str(boroNames[bh])+"-"+str(neighborhoodNames[nbd])
                 counts[key] = counts.get(key, 0) +1
-            
+
     return counts.items()
 
 def toCSVLine(data):
-    # string = []
+    string = []
     
-    # for d in data:
-    #     if(type(d) is list):
-    #         string.append(','.join(str(e) for e in d))
-    #     else:
-    #         string.append(d)
-    # return ','.join(str(e) for e in string )
-    return ",".join(str(d) for d in data)
+    for d in data:
+        if(type(d) is list):
+            string.append(','.join(str(e) for e in d))
+        else:
+            string.append(d)
+    return ','.join(str(e) for e in string )
+    # return ",".join(str(d) for d in data)
 
 def unpackTupes(data):
     j = []
@@ -116,10 +111,11 @@ if __name__ == "__main__":
         .groupByKey() \
         .map(lambda x: (x[0], sorted(x[1], key=lambda z: z[1], reverse=True)[:3])) \
         .sortByKey() \
+        .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
         .saveAsTextFile(output_location)
     
-    # .mapValues(lambda x: unpackTupes(x)) \
+    # 
     # for key in counts:
     #     print(key)
         # .saveAsTextFile(output_location)
