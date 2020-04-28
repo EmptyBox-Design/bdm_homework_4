@@ -4,14 +4,14 @@ def readData(f):
 
   # with gzip.open(f, mode='rt') as recrods:
   #   reader = csv.reader(recrods)
-  with open('eggs.csv', newline='') as csvfile:
+  with open(f, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
 
     i = 0
     for row in reader:
       print(row)
       i += 1
-      if(i == 2):
+      if(i == 5):
         break
 
 if __name__ == "__main__":
