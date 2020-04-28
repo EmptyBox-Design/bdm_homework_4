@@ -105,6 +105,7 @@ if __name__ == "__main__":
     import sys
 
     file_location = sys.argv[1]
+    output_location = sys.argv[2]
 
     sc = SparkContext()
     rdd = sc.textFile(file_location)
@@ -116,10 +117,10 @@ if __name__ == "__main__":
         .sortByKey() \
         .mapValues(lambda x: unpackTupes(x)) \
         .map(toCSVLine) \
-        .collect()
+        .saveAsTextFile(output_location)
     
-    for key in counts:
-        print(key)
+    # for key in counts:
+    #     print(key)
         # .saveAsTextFile(output_location)
 
     print('task complete')
